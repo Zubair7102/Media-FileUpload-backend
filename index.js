@@ -1,5 +1,5 @@
 // app create
-const express = require('express');
+const express = require("express");
 const app = express();
 
 // PORT finding 
@@ -9,16 +9,22 @@ const PORT = process.env.PORT || 3000;
 
 // add middleware
 app.use(express.json());
-const fileUpload = require("express-fileupload");
+const fileupload = require("express-fileupload");
 app.use(fileupload());
 
 // connect with Db
-
+require("./config/database").dbConnect();
 
 // connect with cloud
-
+const cloudinary = require("./config/cloudinary")
+cloudinary.cloudinaryConnect();
 
 // api route mounting
-
+const Upload = require("./routes/FileUpload");
+app.use('api/v1/upload', Upload);
 
 // activate server
+
+app.listen(PORT, () => {
+    console.log(`App is running at ${PORT}`);
+})
