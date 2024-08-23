@@ -35,3 +35,41 @@ exports.localFileUpload = async (req, res) => {
         console.log(error)
     }
 }
+
+
+
+function isFileSupported(fileType,supportedTypes)
+{
+    return supportedTypes.includes(fileType);
+}
+// image upload
+exports.imageUpload = async (req, res) =>{
+    try{
+        // fetch data from the req
+        const {name, tags, email} = req.body;
+        console.log(name, tags, email);
+
+        const file = req.files.imageFile;
+        console.log(file);
+
+        // validation 
+        const supportedTypes = ["jpg", "jpeg", "png"];
+        const fileType = file.name.split('.')[1].toLowerCase();
+
+        if(!isFileSupported(fileType, supportedTypes)) {
+            return res.status(400).json({
+                success: false,
+                message: "File format is not supported"
+            })
+        }
+
+        // if file format is supported
+        
+
+
+    }
+    catch(error)
+    {
+
+    }
+}
