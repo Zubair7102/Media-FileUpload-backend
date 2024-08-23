@@ -1,4 +1,4 @@
-const file = require("../models/file");
+const File = require("../models/file");
 const cloudinary = require("cloudinary").v2;
 
 // localfileUpload handler function
@@ -47,7 +47,7 @@ function isFileSupported(fileType,supportedTypes)
 
 async function uploadFileToCloudinary(file, folder){
     const options = {folder};
-    await cloudinary.uploader.upload(file.tempFilePath);
+    return await cloudinary.uploader.upload(file.tempFilePath, options);
     
 }
 
@@ -74,11 +74,32 @@ exports.imageUpload = async (req, res) =>{
 
         // if file format is supported
         const response = await uploadFileToCloudinary(file, "mediaUpload");
+        console.log(response);
+
+        // save the entry into the database
+        const fileData = await File.create({
+            name,
+            tags,
+            email,
+            imageUrl: response.secure_url,
+        });
+
+        
+        res.status(200).json({
+            success: true,
+            imageUrl: response.secure_url,
+            message: "Image successfully uploaded to cloudinary"
+        })
 
 
     }
     catch(error)
     {
-
+        console.error(error);
+        console.log(error);
+        res.status(400).json({
+            success: false,
+            message: "Something went wrong while uploading the file"
+        })
     }
 }
