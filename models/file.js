@@ -6,7 +6,7 @@ const fileSchema = new mongoose.Schema({
     required: true,
   },
   imageUrl: {
-    types: String,
+    type: String,
   },
   tags: {
     type: String,
@@ -16,4 +16,4 @@ const fileSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("file", fileSchema);
+module.exports = mongoose.model("File", fileSchema);
