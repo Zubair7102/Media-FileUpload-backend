@@ -8,7 +8,7 @@ exports.dbConnect = () =>{
         useUnifiedTopology: true
     })
     .then( () => {
-        console.log("DB connection isd Successfull")
+        console.log("DB connection is Successfull")
     })
     .catch((error) =>{
         console.log("DB is facing Connection Issues")
