@@ -1,4 +1,5 @@
 const file = require("../models/file");
+const cloudinary = require("cloudinary").v2;
 
 // localfileUpload handler function
 
@@ -37,12 +38,20 @@ exports.localFileUpload = async (req, res) => {
 }
 
 
-
+// function to check if the file being uploaded is supported file type or not
 function isFileSupported(fileType,supportedTypes)
 {
     return supportedTypes.includes(fileType);
 }
-// image upload
+
+
+async function uploadFileToCloudinary(file, folder){
+    const options = {folder};
+    await cloudinary.uploader.upload(file.tempFilePath);
+    
+}
+
+// image upload to cloudinary
 exports.imageUpload = async (req, res) =>{
     try{
         // fetch data from the req
@@ -64,7 +73,7 @@ exports.imageUpload = async (req, res) =>{
         }
 
         // if file format is supported
-        
+        const response = await uploadFileToCloudinary(file, "mediaUpload");
 
 
     }
