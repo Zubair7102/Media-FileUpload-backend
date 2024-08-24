@@ -45,8 +45,12 @@ function isFileSupported(fileType,supportedTypes)
 }
 
 
-async function uploadFileToCloudinary(file, folder){
+async function uploadFileToCloudinary(file, folder, quality){
     const options = {folder};
+    if(quality)
+    {
+        options.quality = quality;
+    }
     options.resource_type = "auto";
     return await cloudinary.uploader.upload(file.tempFilePath, options);
     // this function code is according to the cloudinary document
@@ -144,6 +148,57 @@ exports.videoUpload = async (req, res) =>{
             message: "Video successfully uploaded to cloudinary"
         })
 
+    }
+    catch(error)
+    {
+        console.log(error);
+        res.status(400).json({
+            success: false,
+            message: "Something went Wrong"
+        })
+    }
+}
+
+
+// image Size Reducer handler
+exports.imageSizeReducer = async (req, res) => {
+    try{
+        // fetch data from the req
+        const {name, tags, email} = req.body;
+        console.log(name, tags, email);
+
+        const file = req.files.imageFile;
+        console.log(file);
+
+        // validation 
+        const supportedTypes = ["jpg", "jpeg", "png"];
+        const fileType = file.name.split('.')[1].toLowerCase();
+
+        if(!isFileSupported(fileType, supportedTypes)) {
+            return res.status(400).json({
+                success: false,
+                message: "File format is not supported"
+            })
+        }
+
+        // if file format is supported
+        const response = await uploadFileToCloudinary(file, "mediaUpload", 30);
+        console.log(response);
+
+        // save the entry into the database
+        const fileData = await File.create({
+            name,
+            tags,
+            email,
+            imageUrl: response.secure_url,
+        });
+
+        
+        res.status(200).json({
+            success: true,
+            imageUrl: response.secure_url,
+            message: "Image successfully uploaded to cloudinary"
+        })
     }
     catch(error)
     {
